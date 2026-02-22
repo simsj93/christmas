@@ -3,7 +3,7 @@
 const NOTES = {
     2: {
         title: "i",
-        text: "The box resists at first.\nBut it always opens."
+        text: "When I first saw you it was on a computer screen: during covid and over Zoom. Embarrassingly, I would pin your webcam window and study your eyes while Jackie talked. I felt like I knew you.  It was as though a future meaning too immense for time was spilling back into the present. We hadn’t spoken yet. \nThe Japanese call this Koi No Yokan. "
     },
     4: {
         title: "Pattern",
@@ -109,7 +109,7 @@ function onClickBox() {
 }
 
 function updateClickCounter() {
-    clickCounter.textContent = `Click Bank: ${Math.floor(totalClicks)}`;
+    clickCounter.textContent = `Bank: ${Math.floor(totalClicks)}`;
 }
 
 function openBox() {
