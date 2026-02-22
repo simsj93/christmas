@@ -1,0 +1,302 @@
+:root {
+    --box-size: 180px;
+    --transition-speed: 700ms;
+    --fill-color: #90ee90;
+    --bg: #f6f6f6;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    font-family: system-ui, sans-serif;
+    overflow: hidden;
+}
+
+
+/* CSS */
+.button-39 {
+    background-color: #FFFFFF;
+    border: 1px solid rgb(209, 213, 219);
+    border-radius: .5rem;
+    box-sizing: border-box;
+    color: #111827;
+    font-family: "Inter var", ui-sans-serif, system-ui, -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    font-size: .875rem;
+    font-weight: 600;
+    line-height: 1.25rem;
+    padding: .75rem 1rem;
+    text-align: center;
+    text-decoration: none #D1D5DB solid;
+    text-decoration-thickness: auto;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    width: auto;
+    white-space: nowrap;
+}
+
+.button-39:hover {
+    background-color: rgb(249, 250, 251);
+}
+
+.button-39:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+}
+
+.button-39:focus-visible {
+    box-shadow: none;
+}
+
+
+
+
+#game {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
+.note-reveal {
+    max-width: 420px;
+    animation: noteFadeUp 600ms ease forwards;
+}
+
+.note-reveal h2 {
+    margin-bottom: 0.5rem;
+}
+
+.note-reveal p {
+    white-space: pre-line;
+    opacity: 0.85;
+}
+
+@keyframes noteFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- Boxes --- */
+.box {
+    position: absolute;
+    top: 40%;
+    width: var(--box-size);
+    height: var(--box-size);
+    transform: translateY(-50%);
+    cursor: pointer;
+    overflow: hidden;
+    transition:
+        left var(--transition-speed) cubic-bezier(.4, 0, .2, 1),
+        transform 120ms ease, opacity 1s ease;
+    opacity: 0;
+    /* fade-in */
+}
+
+.box.center {
+    left: calc(50% - var(--box-size) / 2);
+}
+
+.box.right {
+    left: calc(100% - var(--box-size) / 2);
+}
+
+.box.visible {
+    opacity: 1;
+}
+
+.box:active {
+    transform: translateY(-50%) scale(0.97);
+}
+
+.chest-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.chest {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+    z-index: 1;
+}
+
+.fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0%;
+    background: var(--fill-color);
+    transition: height 200ms cubic-bezier(.25, .8, .25, 1);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.box.complete {
+    animation: pulse 600ms ease-out;
+}
+
+@keyframes pulse {
+    0% {
+        filter: drop-shadow(0 0 0 rgba(79, 163, 255, 0));
+    }
+
+    50% {
+        filter: drop-shadow(0 0 20px rgba(79, 163, 255, 0.6));
+    }
+
+    100% {
+        filter: drop-shadow(0 0 0 rgba(79, 163, 255, 0));
+    }
+}
+
+.box.open {
+    transform: translateY(-50%) scale(1.1);
+    opacity: 0;
+    transition: transform 400ms ease, opacity 400ms ease;
+}
+
+/* --- Reward Overlay --- */
+#reward-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    z-index: 10;
+}
+
+#reward-overlay.visible {
+    display: flex;
+    animation: fadeIn 300ms ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+#reward-overlay button {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+}
+
+/* --- Collection --- */
+#collection {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    display: flex;
+    gap: 6px;
+}
+
+.collectible {
+    width: 32px;
+    height: 32px;
+    border: 1px solid black;
+    background: #ddd;
+    animation: popIn 300ms ease;
+}
+
+@keyframes popIn {
+    from {
+        transform: scale(0);
+    }
+
+    to {
+        transform: scale(1);
+    }
+}
+
+/* --- End Screen --- */
+#end-screen {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    font-size: 1.5rem;
+}
+
+#end-screen.visible {
+    display: flex;
+    animation: fadeIn 600ms ease;
+}
+
+/* --- Click Counter --- */
+.click-counter {
+    position: absolute;
+    top: calc(40% + var(--box-size) + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1rem;
+    color: #333;
+    opacity: 0.9;
+    user-select: none;
+}
+
+/* --- Upgrade Panel --- */
+#upgrade-panel {
+    position: absolute;
+    top: calc(40% + var(--box-size) + 40px);
+    left: 50%;
+    transform: translateX(-50%);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.upgrade-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 1rem;
+}
+
+/* --- Intro Overlay --- */
+#intro-overlay {
+    position: absolute;
+    inset: 0;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+}
+
+#intro-text {
+    font-size: 2rem;
+    font-weight: bold;
+    opacity: 0;
+    animation: fadeInText 1.2s forwards;
+}
+
+@keyframes fadeInText {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
