@@ -3,18 +3,67 @@
 const NOTES = {
     2: {
         title: "i",
-        text: "When I first saw you it was on a computer screen: during covid and over Zoom. Embarrassingly, I would pin your webcam window and study your eyes while Jackie talked. I felt like I knew you.  It was as though a future meaning too immense for time was spilling back into the present. We hadn’t spoken yet. \nThe Japanese call this Koi No Yokan. "
+        text: "When I first saw you it was on a computer screen: during covid and over Zoom. Embarrassingly, I would pin your webcam window and study your eyes while Jackie talked. \n\n I felt like I knew you.  It was as though a future meaning too immense for time was spilling back into the present. We hadn’t spoken yet. \n \nThe Japanese call this Koi No Yokan. "
     },
     4: {
-        title: "Pattern",
+        title: "ii",
         text: "Every box asks for more.\nYou keep clicking anyway."
     },
     6: {
-        title: "Momentum",
+        title: "iii",
+        text: "Effort compounds.\nSo does commitment."
+    },
+    8: {
+        title: "iv",
+        text: "Effort compounds.\nSo does commitment."
+    },
+    10: {
+        title: "v",
+        text: "Effort compounds.\nSo does commitment."
+    },
+    12: {
+        title: "vi",
+        text: "Effort compounds.\nSo does commitment."
+    },
+    14: {
+        title: "vii",
+        text: "Effort compounds.\nSo does commitment."
+    },
+    16: {
+        title: "iix",
+        text: "Effort compounds.\nSo does commitment."
+    },
+    18: {
+        title: "ix",
+        text: "Effort compounds.\nSo does commitment."
+    },
+    20: {
+        title: "x",
         text: "Effort compounds.\nSo does commitment."
     },
     // add more as needed
 };
+
+const COLLECTIBLES = [
+    { id: "can", name: "Can", src: "./assets/can.png", message: "a"},
+    { id: "leash", name: "Leash", src: "./assets/leash.png", message: "b"},
+    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "I know you don't like it but it's full of selenium."},
+    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "c"},
+    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "c"},
+    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "c"},
+    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "c"},
+    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "c"},
+    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "c"},
+    // add more...
+
+
+];
+
+
+
+let collectibleIndex = 0; // tracks which one to award next
+
+
 
 const boxes = Array.from({ length: 20 }, (_, i) => {
     let reward;
@@ -24,9 +73,10 @@ const boxes = Array.from({ length: 20 }, (_, i) => {
     } else if ((i + 1) % 2 === 0) {
         reward = { type: "note", id: i + 1 };
     } else {
-        reward = { type: "collectible" };
+        // assign a collectible id deterministically
+        const c = COLLECTIBLES[(i /* or any mapping */) % COLLECTIBLES.length];
+        reward = { type: "collectible", id: c.id };
     }
-
     return { clicksRequired: Math.ceil(5 * Math.pow(2.5, i)), reward };
 });
 
@@ -127,7 +177,7 @@ function showReward() {
     }
 
     if (reward.type === "collectible") {
-        showCollectibleReward();
+        showCollectibleReward(reward.id);
     }
 
     if (currentIndex === 0) {
@@ -162,20 +212,102 @@ function showNoteReward(noteId) {
     rewardContent.appendChild(wrapper);
 }
 
-function showCollectibleReward() {
-    const item = document.createElement("div");
-    item.className = "collectible";
-    collection.appendChild(item);
+// function showCollectibleReward() {
+//     const item = document.createElement("div");
+//     item.className = "collectible";
+//     collection.appendChild(item);
 
-    const preview = document.createElement("div");
-    preview.className = "collectible";
-    preview.style.width = "96px";
-    preview.style.height = "96px";
-    preview.style.margin = "0 auto 1rem";
+//     const preview = document.createElement("div");
+//     preview.className = "collectible";
+//     preview.style.width = "96px";
+//     preview.style.height = "96px";
+//     preview.style.margin = "0 auto 1rem";
 
-    rewardContent.appendChild(preview);
+//     rewardContent.appendChild(preview);
+// }
+// function showCollectibleReward(collectibleId) {
+//     const c = COLLECTIBLES.find(x => x.id === collectibleId) ?? COLLECTIBLES[0];
+
+//     // Add to collection grid
+//     const item = document.createElement("div");
+//     item.className = "collectible";
+    
+
+//     const img = document.createElement("img");
+//     img.src = c.src;
+//     img.alt = c.name;
+//     img.loading = "lazy";
+//     img.style.width = "100%";
+//     img.style.height = "100%";
+//     img.style.objectFit = "contain";
+
+//     item.appendChild(img);
+//     collection.appendChild(item);
+
+//     // Preview in overlay
+//     const previewWrap = document.createElement("div");
+//     previewWrap.className = "collectible preview";
+//     previewWrap.style.width = "96px";
+//     previewWrap.style.height = "96px";
+//     previewWrap.style.margin = "0 auto 1rem";
+
+//     const previewImg = document.createElement("img");
+//     previewImg.src = c.src;
+//     previewImg.alt = c.name;
+//     previewImg.style.width = "100%";
+//     previewImg.style.height = "100%";
+//     previewImg.style.objectFit = "contain";
+
+//     previewWrap.appendChild(previewImg);
+
+//     const label = document.createElement("p");
+//     label.textContent = `You've unwrapped a gift. \n\n ${c.name}`;
+//     label.style.margin = "0 0 0.75rem";
+//     label.style.fontWeight = "600";
+//     label.style.textAlign = "center";
+
+//     rewardContent.appendChild(previewWrap);
+//     rewardContent.appendChild(label);
+// }
+function showCollectibleReward(collectibleId) {
+  const c = COLLECTIBLES.find(x => x.id === collectibleId) ?? COLLECTIBLES[0];
+
+  // Add to collection grid
+  const item = document.createElement("div");
+  item.className = "collectible";
+
+  const img = document.createElement("img");
+  img.src = c.src;
+  img.alt = c.name;
+
+  item.appendChild(img);
+  collection.appendChild(item);
+
+  // Preview in overlay
+  const previewWrap = document.createElement("div");
+  previewWrap.className = "collectible preview";
+
+  const previewImg = document.createElement("img");
+  previewImg.src = c.src;
+  previewImg.alt = c.name;
+
+  previewWrap.appendChild(previewImg);
+
+  // Title
+  const title = document.createElement("h3");
+  title.textContent = c.name;
+  title.style.textAlign = "center";
+
+  // Custom message
+  const message = document.createElement("p");
+  message.innerHTML = c.message; // allows bold/italic if desired
+  message.style.textAlign = "center";
+  message.style.margin = "0.5rem 0 1rem";
+
+  rewardContent.appendChild(previewWrap);
+  rewardContent.appendChild(title);
+  rewardContent.appendChild(message);
 }
-
 
 
 function closeReward() {
@@ -294,7 +426,19 @@ function showUpgradePanel() {
     openBox(); // continue after first box
 }
 
+// --- DEV MODE BUTTON ---
+const devBtn = document.createElement("button");
+devBtn.className = "button-39";
+devBtn.textContent = "DEV MODE: +10,000 per click";
 
+devBtn.onclick = () => {
+    totalClicksPerClick += 10000;
+    updateClickCounter();
+};
+
+
+
+upgradePanel.appendChild(devBtn);
 
 const introOverlay = document.getElementById("intro-overlay");
 setTimeout(() => {
