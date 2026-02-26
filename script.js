@@ -3,7 +3,7 @@
 const NOTES = {
     2: {
         title: "i",
-        text: "When I first saw you it was on a computer screen: during covid and over Zoom. Embarrassingly, I would pin your webcam window and study your eyes while Jackie talked. \n\n I felt like I knew you.  It was as though a future meaning too immense for time was spilling back into the present. We hadn’t spoken yet. \n \nThe Japanese call this Koi No Yokan. "
+        text: "When I first saw you it was on a computer screen: during covid and over Zoom. I think I eventually told you that I would pin your webcam window and study your eyes while Jackie talked. \n\n I felt like I knew you.  It was as though a future meaning too immense for time was spilling back into the present. We hadn’t spoken yet. \n \nThe Japanese call this Koi No Yokan. "
     },
     4: {
         title: "ii",
@@ -45,15 +45,15 @@ const NOTES = {
 };
 
 const COLLECTIBLES = [
-    { id: "can", name: "Can", src: "./assets/can.png", message: "a"},
-    { id: "leash", name: "Leash", src: "./assets/leash.png", message: "b"},
-    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "I know you don't like it but it's full of selenium."},
-    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "c"},
-    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "c"},
-    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "c"},
-    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "c"},
-    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "c"},
-    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "c"},
+    { id: "can", name: "Can", src: "./assets/can.png", message: "a" },
+    { id: "leash", name: "Leash", src: "./assets/leash.png", message: "b" },
+    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "I know you don't like it but it's full of selenium." },
+    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "c" },
+    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "c" },
+    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "c" },
+    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "c" },
+    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "c" },
+    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "c" },
     // add more...
 
 
@@ -87,6 +87,9 @@ let totalClicks = 0;
 let totalClicksPerClick = 1; // permanent +1 upgrades
 let clickPower = 1; // base click power
 let doubleActive = false;
+let autoClickLevel = 0;          // how many “auto clicks” per tick
+let autoClickIntervalId = null;  // interval handle
+const AUTO_CLICK_TICK_MS = 1000; // 1x per second (adjust if you want)
 
 let addClickValueCost = 1;
 let doubleClickCost = 1;
@@ -139,21 +142,42 @@ function setupBoxes() {
 }
 
 function onClickBox() {
+    const required = boxes[currentIndex].clicksRequired;
+
+    // how much you *would* add
     const effectiveClick = totalClicksPerClick * clickPower;
-    clicks += effectiveClick;
-    totalClicks += effectiveClick;
+
+    // how much room is left on this box
+    const remaining = required - clicks;
+    if (remaining <= 0) return;
+
+    // apply only what fits (prevents overflow)
+    const appliedClick = Math.min(effectiveClick, remaining);
+
+    clicks += appliedClick;
+    totalClicks += appliedClick;
     updateClickCounter();
 
-    const required = boxes[currentIndex].clicksRequired;
     const progress = Math.min(clicks / required, 1);
     centerBox.querySelector(".fill").style.height = `${progress * 100}%`;
 
     if (progress >= 1) {
+        clicks = required; // hard-cap in case of floating point edge cases
         centerBox.classList.add("complete");
         centerBox.removeEventListener("click", onClickBox);
         setTimeout(() => {
-            if (currentIndex === 0) showUpgradePanel();
-            else openBox();
+            const isFinalBox = currentIndex === boxes.length - 2;
+
+            if (isFinalBox) {
+                showFinalOverlay();   
+                return;
+            }
+
+            if (currentIndex === 0) {
+                showUpgradePanel();
+            } else {
+                openBox();
+            }
         }, 400);
     }
 }
@@ -231,7 +255,7 @@ function showNoteReward(noteId) {
 //     // Add to collection grid
 //     const item = document.createElement("div");
 //     item.className = "collectible";
-    
+
 
 //     const img = document.createElement("img");
 //     img.src = c.src;
@@ -270,43 +294,43 @@ function showNoteReward(noteId) {
 //     rewardContent.appendChild(label);
 // }
 function showCollectibleReward(collectibleId) {
-  const c = COLLECTIBLES.find(x => x.id === collectibleId) ?? COLLECTIBLES[0];
+    const c = COLLECTIBLES.find(x => x.id === collectibleId) ?? COLLECTIBLES[0];
 
-  // Add to collection grid
-  const item = document.createElement("div");
-  item.className = "collectible";
+    // Add to collection grid
+    const item = document.createElement("div");
+    item.className = "collectible";
 
-  const img = document.createElement("img");
-  img.src = c.src;
-  img.alt = c.name;
+    const img = document.createElement("img");
+    img.src = c.src;
+    img.alt = c.name;
 
-  item.appendChild(img);
-  collection.appendChild(item);
+    item.appendChild(img);
+    collection.appendChild(item);
 
-  // Preview in overlay
-  const previewWrap = document.createElement("div");
-  previewWrap.className = "collectible preview";
+    // Preview in overlay
+    const previewWrap = document.createElement("div");
+    previewWrap.className = "collectible preview";
 
-  const previewImg = document.createElement("img");
-  previewImg.src = c.src;
-  previewImg.alt = c.name;
+    const previewImg = document.createElement("img");
+    previewImg.src = c.src;
+    previewImg.alt = c.name;
 
-  previewWrap.appendChild(previewImg);
+    previewWrap.appendChild(previewImg);
 
-  // Title
-  const title = document.createElement("h3");
-  title.textContent = c.name;
-  title.style.textAlign = "center";
+    // Title
+    const title = document.createElement("h3");
+    title.textContent = c.name;
+    title.style.textAlign = "center";
 
-  // Custom message
-  const message = document.createElement("p");
-  message.innerHTML = c.message; // allows bold/italic if desired
-  message.style.textAlign = "center";
-  message.style.margin = "0.5rem 0 1rem";
+    // Custom message
+    const message = document.createElement("p");
+    message.innerHTML = c.message; // allows bold/italic if desired
+    message.style.textAlign = "center";
+    message.style.margin = "0.5rem 0 1rem";
 
-  rewardContent.appendChild(previewWrap);
-  rewardContent.appendChild(title);
-  rewardContent.appendChild(message);
+    rewardContent.appendChild(previewWrap);
+    rewardContent.appendChild(title);
+    rewardContent.appendChild(message);
 }
 
 
@@ -320,6 +344,7 @@ function transitionBoxes() {
         clickCounter.style.display = "none";
         upgradePanel.style.display = "none";
         endScreen.classList.add("visible");
+        stopAutoClicker();
         return;
     }
 
@@ -335,12 +360,36 @@ function transitionBoxes() {
         centerBox.addEventListener("click", onClickBox);
 
         currentIndex++;
-        if (currentIndex >= boxes.length) {
-            endScreen.classList.add("visible");
+
+        // If we’re about to be on the last playable box (the one before the hidden final),
+        // do NOT create a right-side preview box.
+        const lastPlayableIndex = boxes.length - 2;
+        if (currentIndex >= lastPlayableIndex) {
+            rightBox = null; // nothing should render on the right
             return;
         }
+
         rightBox = createBox("right");
     }, 700);
+}
+function startAutoClicker() {
+    if (autoClickIntervalId) return;
+
+    autoClickIntervalId = setInterval(() => {
+        // don’t click while reward overlay or intro is up, or if boxes aren’t ready
+        if (!centerBox) return;
+        if (overlay?.classList?.contains("visible")) return;
+        if (endScreen?.classList?.contains("visible")) return;
+
+        // Perform N auto-clicks per tick
+        for (let i = 0; i < autoClickLevel; i++) onClickBox();
+    }, AUTO_CLICK_TICK_MS);
+}
+
+function stopAutoClicker() {
+    if (!autoClickIntervalId) return;
+    clearInterval(autoClickIntervalId);
+    autoClickIntervalId = null;
 }
 
 function showUpgradePanel() {
@@ -388,6 +437,7 @@ function showUpgradePanel() {
         }
 
         autoClickBtn.textContent = `Auto-click (Cost: ${autoClickCost})`;
+        autoClickBtn.textContent = `Auto-click Lv.${autoClickLevel} (Cost: ${autoClickCost})`;
     }
 
     updateButtons();
@@ -402,37 +452,62 @@ function showUpgradePanel() {
         }
     };
 
-    doubleBtn.onclick = () => {
-        if (totalClicks >= doubleClickCost && !doubleActive) {
-            totalClicks -= doubleClickCost;
-            clickPower *= 2;
-            doubleActive = true;
-            doubleClickCost = 1000; // double the cost each time
-            updateClickCounter();
-            updateButtons();
+    // doubleBtn.onclick = () => {
+    //     if (totalClicks >= doubleClickCost && !doubleActive) {
+    //         totalClicks -= doubleClickCost;
+    //         clickPower *= 2;
+    //         doubleActive = true;
+    //         doubleClickCost = 1000; // double the cost each time
+    //         updateClickCounter();
+    //         updateButtons();
 
-            setTimeout(() => {
-                clickPower /= 2;
-                doubleActive = false;
-                updateButtons();
-            }, 10000);
-        }
+    //         setTimeout(() => {
+    //             clickPower /= 2;
+    //             doubleActive = false;
+    //             updateButtons();
+    //         }, 10000);
+    //     }
+    // };
+    autoClickBtn.onclick = () => {
+        if (totalClicks < autoClickCost) return;
+
+        totalClicks -= autoClickCost;
+
+        autoClickLevel += 1;               // each purchase adds +1 auto-click per tick
+        autoClickCost = Math.ceil(autoClickCost * 2); // scale cost (tune if desired)
+
+        updateClickCounter();
+        updateButtons();
+        startAutoClicker();
     };
 
     upgradePanel.appendChild(addBtn);
-    upgradePanel.appendChild(doubleBtn);
+    // upgradePanel.appendChild(doubleBtn);
     upgradePanel.appendChild(autoClickBtn); // optional
 
     openBox(); // continue after first box
 }
 
+function showFinalOverlay() {
+    
+    // Hide the box visually
+    centerBox.style.display = "none";
+
+    // Stop auto-clicker if running
+    if (typeof stopAutoClicker === "function") {
+        stopAutoClicker();
+    }
+
+    // Show your existing end screen / overlay
+    endScreen.classList.add("visible");
+}
 // --- DEV MODE BUTTON ---
 const devBtn = document.createElement("button");
 devBtn.className = "button-39";
-devBtn.textContent = "DEV MODE: +10,000 per click";
+devBtn.textContent = "DEV MODE: +100,000,000 per click";
 
 devBtn.onclick = () => {
-    totalClicksPerClick += 10000;
+    totalClicksPerClick += 100000000;
     updateClickCounter();
 };
 
