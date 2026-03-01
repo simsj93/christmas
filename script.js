@@ -63,7 +63,6 @@ const COLLECTIBLES = [
 
 let collectibleIndex = 0; // tracks which one to award next
 
-let plus200Purchased = false;
 
 // --- Balance targets (accounts for upgrades; DEV excluded) ---
 const BOX_COUNT = 20;
@@ -84,7 +83,7 @@ const FIRST_AFTER_BOX_SECONDS = 12;
 // This multiplier compensates for the fact that players will continuously buy upgrades
 // (+1 per click cost doubles; auto-click cost doubles), which greatly increases throughput.
 // Tunable knob: raise to make longer, lower to make shorter.
-const REQUIREMENT_MULTIPLIER = 55;
+const REQUIREMENT_MULTIPLIER = 45;
 
 const AFTER_BOX_COUNT = PLAYABLE_BOXES - 1; // boxes 1..18 (18 boxes)
 const remainingSeconds =
@@ -447,15 +446,6 @@ function showUpgradePanel() {
     const addBtn = document.createElement("button");
     addBtn.className = "button-39";
 
-
-    // +200 button
-    // +200 per click (one-time)
-    const plus200Btn = document.createElement("button");
-    plus200Btn.className = "button-39";
-
-    const PLUS200_COST = 10000;
-    let plus200Purchased = false;
-
     // Double click 10s button
     const doubleBtn = document.createElement("button");
     doubleBtn.className = "button-39";
@@ -497,39 +487,8 @@ function showUpgradePanel() {
         autoClickBtn.textContent = `Auto-click Lv.${autoClickLevel} (Cost: ${autoClickCost})`;
     }
 
-    if (plus200Purchased) {
-        plus200Btn.textContent = "+200 per click (Purchased)";
-        plus200Btn.disabled = true;
-    } else {
-        plus200Btn.textContent = `+200 per click (Cost: ${PLUS200_COST})`;
-        plus200Btn.disabled = totalClicks < PLUS200_COST;
-    }
-    plus200Btn.onclick = () => {
-        if (plus200Purchased) return;
-        if (totalClicks < PLUS200_COST) return;
-
-        totalClicks -= PLUS200_COST;
-        totalClicksPerClick += 200;
-        plus200Purchased = true;
-
-        updateClickCounter(); // will also refresh buttons now
-    };
 
     refreshUpgradeButtons = updateButtons;
-
-    plus200Btn.addEventListener("click", () => {
-        if (plus200Purchased) return;
-        if (totalClicks < 10000) return;
-
-        totalClicks -= 10000;
-        totalClicksPerClick += 200;
-        plus200Purchased = true;
-
-        updateClickCounter();
-        updatePlus200Button();
-
-        // If you have other upgrade button updates, call them too.
-    });
 
     updateButtons();
 
@@ -573,7 +532,6 @@ function showUpgradePanel() {
     };
 
     upgradePanel.appendChild(addBtn);
-    upgradePanel.appendChild(plus200Btn);
     upgradePanel.appendChild(autoClickBtn); // optional
 
 
