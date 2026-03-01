@@ -204,8 +204,11 @@ function onClickBox() {
     updateProgressUIAndHandleCompletion();
 }
 
+let refreshUpgradeButtons = null;
+
 function updateClickCounter() {
     clickCounter.textContent = `Bank: ${Math.floor(totalClicks)}`;
+    if (typeof refreshUpgradeButtons === "function") refreshUpgradeButtons();
 }
 
 function openBox() {
@@ -444,11 +447,14 @@ function showUpgradePanel() {
     const addBtn = document.createElement("button");
     addBtn.className = "button-39";
 
+
     // +200 button
+    // +200 per click (one-time)
     const plus200Btn = document.createElement("button");
     plus200Btn.className = "button-39";
-    plus200Btn.id = "plus200-btn";
-   
+
+    const PLUS200_COST = 10000;
+    let plus200Purchased = false;
 
     // Double click 10s button
     const doubleBtn = document.createElement("button");
@@ -490,15 +496,26 @@ function showUpgradePanel() {
         autoClickBtn.textContent = `Auto-click (Cost: ${autoClickCost})`;
         autoClickBtn.textContent = `Auto-click Lv.${autoClickLevel} (Cost: ${autoClickCost})`;
     }
-    function updatePlus200Button() {
-        if (plus200Purchased) {
-            plus200Btn.textContent = "+200 per click (Purchased)";
-            plus200Btn.disabled = true;
-        } else {
-            plus200Btn.textContent = "+200 per click (Cost: 10,000)";
-            plus200Btn.disabled = totalClicks < 10000;
-        }
+
+    if (plus200Purchased) {
+        plus200Btn.textContent = "+200 per click (Purchased)";
+        plus200Btn.disabled = true;
+    } else {
+        plus200Btn.textContent = `+200 per click (Cost: ${PLUS200_COST})`;
+        plus200Btn.disabled = totalClicks < PLUS200_COST;
     }
+    plus200Btn.onclick = () => {
+        if (plus200Purchased) return;
+        if (totalClicks < PLUS200_COST) return;
+
+        totalClicks -= PLUS200_COST;
+        totalClicksPerClick += 200;
+        plus200Purchased = true;
+
+        updateClickCounter(); // will also refresh buttons now
+    };
+
+    refreshUpgradeButtons = updateButtons;
 
     plus200Btn.addEventListener("click", () => {
         if (plus200Purchased) return;
@@ -556,10 +573,10 @@ function showUpgradePanel() {
     };
 
     upgradePanel.appendChild(addBtn);
-    // upgradePanel.appendChild(doubleBtn);
+    upgradePanel.appendChild(plus200Btn);
     upgradePanel.appendChild(autoClickBtn); // optional
-     upgradePanel.appendChild(plus200Btn);
-    updatePlus200Button()
+
+
 
     openBox(); // continue after first box
 }
