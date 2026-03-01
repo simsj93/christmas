@@ -3,7 +3,7 @@
 const NOTES = {
     2: {
         title: "i",
-        text: "When I first saw you it was on a computer screen: during covid and over Zoom. I think I eventually told you that I would pin your webcam window and study your eyes while Jackie talked. \n\n I felt like I knew you.  It was as though a future meaning too immense for time was spilling back into the present. We hadn’t spoken yet. \n \nThe Japanese call this Koi No Yokan. "
+        text: "When I first saw you it was on a computer screen: during covid and over Zoom. I think I eventually told you that I would pin your webcam window and study your eyes while Jackie talked. \n\n I felt like I knew you, though we hadn't really even spoken yet. It was as though a future meaning too immense for time was spilling back into the present. \n \nThe Japanese call this Koi No Yokan. "
     },
     4: {
         title: "ii",
@@ -63,9 +63,38 @@ const COLLECTIBLES = [
 
 let collectibleIndex = 0; // tracks which one to award next
 
+let plus200Purchased = false;
 
+// --- Balance targets (accounts for upgrades; DEV excluded) ---
+const BOX_COUNT = 20;
 
-const boxes = Array.from({ length: 20 }, (_, i) => {
+// You end on index boxes.length - 2, so playable boxes are 0..18 (19 boxes).
+const PLAYABLE_BOXES = BOX_COUNT - 1;
+
+// Target: ~10 minutes at ~4 manual clicks/sec
+const TARGET_SECONDS_TOTAL = 10 * 60;
+const ASSUMED_CLICKS_PER_SEC = 4;
+
+// Exception: first box stays tiny
+const BOX0_REQUIRED_CLICKS = 5;
+
+// We distribute remaining time across boxes 1..18, increasing slightly each box.
+const FIRST_AFTER_BOX_SECONDS = 12;
+
+// This multiplier compensates for the fact that players will continuously buy upgrades
+// (+1 per click cost doubles; auto-click cost doubles), which greatly increases throughput.
+// Tunable knob: raise to make longer, lower to make shorter.
+const REQUIREMENT_MULTIPLIER = 55;
+
+const AFTER_BOX_COUNT = PLAYABLE_BOXES - 1; // boxes 1..18 (18 boxes)
+const remainingSeconds =
+    TARGET_SECONDS_TOTAL - (BOX0_REQUIRED_CLICKS / ASSUMED_CLICKS_PER_SEC);
+
+const stepSeconds =
+    (2 * remainingSeconds / AFTER_BOX_COUNT - 2 * FIRST_AFTER_BOX_SECONDS) /
+    (AFTER_BOX_COUNT - 1);
+
+const boxes = Array.from({ length: BOX_COUNT }, (_, i) => {
     let reward;
 
     if (i === 0) {
@@ -73,13 +102,27 @@ const boxes = Array.from({ length: 20 }, (_, i) => {
     } else if ((i + 1) % 2 === 0) {
         reward = { type: "note", id: i + 1 };
     } else {
-        // assign a collectible id deterministically
-        const c = COLLECTIBLES[(i /* or any mapping */) % COLLECTIBLES.length];
+        const c = COLLECTIBLES[i % COLLECTIBLES.length];
         reward = { type: "collectible", id: c.id };
     }
-    return { clicksRequired: Math.ceil(5 * Math.pow(2.5, i)), reward };
-});
 
+    let clicksRequired;
+
+    if (i === 0) {
+        clicksRequired = BOX0_REQUIRED_CLICKS; // exception
+    } else {
+        // Map i=1..18 to j=0..17 for the post-first-box ramp
+        const j = Math.min(i - 1, AFTER_BOX_COUNT - 1);
+        const secondsForBox = FIRST_AFTER_BOX_SECONDS + j * stepSeconds;
+
+        clicksRequired = Math.max(
+            5,
+            Math.round(secondsForBox * ASSUMED_CLICKS_PER_SEC * REQUIREMENT_MULTIPLIER)
+        );
+    }
+
+    return { clicksRequired, reward };
+});
 
 let currentIndex = 0;
 let clicks = 0;
@@ -158,28 +201,7 @@ function onClickBox() {
     totalClicks += appliedClick;
     updateClickCounter();
 
-    const progress = Math.min(clicks / required, 1);
-    centerBox.querySelector(".fill").style.height = `${progress * 100}%`;
-
-    if (progress >= 1) {
-        clicks = required; // hard-cap in case of floating point edge cases
-        centerBox.classList.add("complete");
-        centerBox.removeEventListener("click", onClickBox);
-        setTimeout(() => {
-            const isFinalBox = currentIndex === boxes.length - 2;
-
-            if (isFinalBox) {
-                showFinalOverlay();   
-                return;
-            }
-
-            if (currentIndex === 0) {
-                showUpgradePanel();
-            } else {
-                openBox();
-            }
-        }, 400);
-    }
+    updateProgressUIAndHandleCompletion();
 }
 
 function updateClickCounter() {
@@ -339,6 +361,29 @@ function closeReward() {
     transitionBoxes();
 }
 
+function updateProgressUIAndHandleCompletion() {
+    const required = boxes[currentIndex].clicksRequired;
+    const progress = Math.min(clicks / required, 1);
+    centerBox.querySelector(".fill").style.height = `${progress * 100}%`;
+
+    if (progress >= 1) {
+        centerBox.classList.add("complete");
+        centerBox.removeEventListener("click", onClickBox);
+
+        setTimeout(() => {
+            // If your repo already uses this “second-to-last ends the game” rule, keep it:
+            const isFinalBox = currentIndex === boxes.length - 2;
+            if (isFinalBox) {
+                showFinalOverlay();
+                return;
+            }
+
+            if (currentIndex === 0) showUpgradePanel();
+            else openBox();
+        }, 600);
+    }
+}
+
 function transitionBoxes() {
     if (currentIndex >= boxes.length) {
         clickCounter.style.display = "none";
@@ -399,6 +444,12 @@ function showUpgradePanel() {
     const addBtn = document.createElement("button");
     addBtn.className = "button-39";
 
+    // +200 button
+    const plus200Btn = document.createElement("button");
+    plus200Btn.className = "button-39";
+    plus200Btn.id = "plus200-btn";
+   
+
     // Double click 10s button
     const doubleBtn = document.createElement("button");
     doubleBtn.className = "button-39";
@@ -439,6 +490,29 @@ function showUpgradePanel() {
         autoClickBtn.textContent = `Auto-click (Cost: ${autoClickCost})`;
         autoClickBtn.textContent = `Auto-click Lv.${autoClickLevel} (Cost: ${autoClickCost})`;
     }
+    function updatePlus200Button() {
+        if (plus200Purchased) {
+            plus200Btn.textContent = "+200 per click (Purchased)";
+            plus200Btn.disabled = true;
+        } else {
+            plus200Btn.textContent = "+200 per click (Cost: 10,000)";
+            plus200Btn.disabled = totalClicks < 10000;
+        }
+    }
+
+    plus200Btn.addEventListener("click", () => {
+        if (plus200Purchased) return;
+        if (totalClicks < 10000) return;
+
+        totalClicks -= 10000;
+        totalClicksPerClick += 200;
+        plus200Purchased = true;
+
+        updateClickCounter();
+        updatePlus200Button();
+
+        // If you have other upgrade button updates, call them too.
+    });
 
     updateButtons();
 
@@ -484,12 +558,85 @@ function showUpgradePanel() {
     upgradePanel.appendChild(addBtn);
     // upgradePanel.appendChild(doubleBtn);
     upgradePanel.appendChild(autoClickBtn); // optional
+     upgradePanel.appendChild(plus200Btn);
+    updatePlus200Button()
 
     openBox(); // continue after first box
 }
+const boostEl = document.getElementById("boost");
+let boostActive = false;
+let boostHideTimer = null;
+let boostNextTimer = null;
+
+function randInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function scheduleNextBoost() {
+    if (boostNextTimer) clearTimeout(boostNextTimer);
+    const delay = randInt(8000, 16000); // 8–16s
+    boostNextTimer = setTimeout(showBoost, delay);
+}
+
+function showBoost() {
+    // Don’t show if reward/end overlays are up, or if no active center box
+    if (!centerBox || boostActive) {
+        scheduleNextBoost();
+        return;
+    }
+
+    boostActive = true;
+    boostEl.classList.remove("hidden");
+    boostEl.textContent = "❤";
+
+    // Position: avoid the top strip (collection) and screen edges
+    const pad = 16;
+    const topSafe = 90;       // keep away from collection area
+    const bottomSafe = 24;
+
+    const w = boostEl.offsetWidth || 56;
+    const h = boostEl.offsetHeight || 56;
+
+    const x = randInt(pad, Math.max(pad, window.innerWidth - w - pad));
+    const y = randInt(topSafe, Math.max(topSafe, window.innerHeight - h - bottomSafe));
+
+    boostEl.style.left = `${x}px`;
+    boostEl.style.top = `${y}px`;
+
+    // Auto-hide after a short time if not clicked
+    if (boostHideTimer) clearTimeout(boostHideTimer);
+    boostHideTimer = setTimeout(hideBoost, randInt(1500, 2400)); // 2.5–4s
+}
+
+function hideBoost() {
+    boostActive = false;
+    boostEl.classList.add("hidden");
+    scheduleNextBoost();
+}
+
+boostEl.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (!boostActive) return;
+
+    // Bonus scales with current box requirement (feels relevant throughout)
+    const required = boxes[currentIndex].clicksRequired;
+    const bonus = Math.max(10, Math.ceil(required * 0.12)); // 12% of requirement, min 10
+
+    clicks += bonus;
+    totalClicks += bonus;
+    updateClickCounter();
+
+    // Update fill + handle completion (same flow as normal clicks)
+    updateProgressUIAndHandleCompletion();
+
+    hideBoost();
+});
+
+// Start the boost cycle once the game is running
+scheduleNextBoost();
 
 function showFinalOverlay() {
-    
+
     // Hide the box visually
     centerBox.style.display = "none";
 
