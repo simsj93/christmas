@@ -51,62 +51,64 @@ body {
 }
 
 .collectible.selectable {
-  cursor: pointer;
-  border-radius: 10px;
+    cursor: pointer;
+    border-radius: 10px;
 }
 
 .collectible.selected {
-  outline: 3px solid rgba(0, 0, 0, 0.65);
-  outline-offset: 2px;
+    outline: 3px solid rgba(0, 0, 0, 0.65);
+    outline-offset: 2px;
 }
 
 #collection-info {
-  position: absolute;
-  left: 20px;
-  top: 120px; /* below the collection row; adjust if you want */
-  width: min(360px, calc(100vw - 40px));
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid rgba(0,0,0,0.12);
-  border-radius: 14px;
-  padding: 12px 14px;
-  z-index: 30;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+    position: absolute;
+    left: 20px;
+    top: 120px;
+    /* below the collection row; adjust if you want */
+    width: min(360px, calc(100vw - 40px));
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 14px;
+    padding: 12px 14px;
+    z-index: 30;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
 }
 
 #collection-info.hidden {
-  display: none;
+    display: none;
 }
 
 #collection-info h3 {
-  margin: 0 0 6px 0;
-  font-size: 1rem;
+    margin: 0 0 6px 0;
+    font-size: 1rem;
 }
 
 #collection-info #collection-info-message {
-  margin: 0;
-  opacity: 0.9;
+    margin: 0;
+    opacity: 0.9;
 }
 
 
 #koi-title {
-  position: absolute;
-  top: 110px;       /* adjust as desired */
-  left: 50%;
-  transform: translate(-50%, 10px);
+    position: absolute;
+    top: 110px;
+    /* adjust as desired */
+    left: 50%;
+    transform: translate(-50%, 10px);
 
-  margin: 0;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-align: center;
-  z-index: 5;
+    margin: 0;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-align: center;
+    z-index: 5;
 
-  opacity: 0;
-  transition: opacity 1.2s ease, transform 1.2s ease;
+    opacity: 0;
+    transition: opacity 1.2s ease, transform 1.2s ease;
 }
 
 #koi-title.show {
-  opacity: 1;
-  transform: translate(-50%, 0);
+    opacity: 1;
+    transform: translate(-50%, 0);
 }
 
 #game {
@@ -198,7 +200,7 @@ body {
     background: radial-gradient(circle at 30% 30%, #ff9fb3, #ff2e63);
     color: white;
 
-    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
 
     z-index: 3;
     animation: boostPop 0.25s ease-out, boostFloat 1.2s ease-in-out infinite;
@@ -380,7 +382,8 @@ body {
     max-width: 520px;
     width: 90%;
     text-align: center;
-    font-size: 2rem;
+    font-size: 1.5rem;
+    padding: 1rem;
 }
 
 #end-screen.visible {
