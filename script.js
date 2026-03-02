@@ -83,7 +83,7 @@ const FIRST_AFTER_BOX_SECONDS = 12;
 // This multiplier compensates for the fact that players will continuously buy upgrades
 // (+1 per click cost doubles; auto-click cost doubles), which greatly increases throughput.
 // Tunable knob: raise to make longer, lower to make shorter.
-const REQUIREMENT_MULTIPLIER = 45;
+const REQUIREMENT_MULTIPLIER = 40;
 
 const AFTER_BOX_COUNT = PLAYABLE_BOXES - 1; // boxes 1..18 (18 boxes)
 const remainingSeconds =
