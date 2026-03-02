@@ -47,13 +47,12 @@ const NOTES = {
 const COLLECTIBLES = [
     { id: "can", name: "Can", src: "./assets/can.png", message: "a" },
     { id: "leash", name: "Leash", src: "./assets/leash.png", message: "b" },
-    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "I know you don't like it but it's full of selenium." },
-    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "c" },
-    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "c" },
-    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "c" },
-    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "c" },
-    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "c" },
-    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "c" },
+    { id: "shrimp", name: "Shrimp 3", src: "./assets/shrimp.png", message: "I know you don't like it but it's full of selenium." },
+    { id: "shrimp", name: "Shrimp 4", src: "./assets/shrimp.png", message: "c" },
+    { id: "shrimp", name: "Shrimp 5", src: "./assets/shrimp.png", message: "c" },
+    { id: "shrimp", name: "Shrimp 6", src: "./assets/shrimp.png", message: "c" },
+    { id: "shrimp", name: "Shrimp 7", src: "./assets/shrimp.png", message: "c" },
+    { id: "shrimp", name: "Shrimp 8", src: "./assets/shrimp.png", message: "c" },
     // add more...
 
 
@@ -71,19 +70,19 @@ const BOX_COUNT = 20;
 const PLAYABLE_BOXES = BOX_COUNT - 1;
 
 // Target: ~10 minutes at ~4 manual clicks/sec
-const TARGET_SECONDS_TOTAL = 10 * 60;
+const TARGET_SECONDS_TOTAL = 417;
 const ASSUMED_CLICKS_PER_SEC = 4;
 
 // Exception: first box stays tiny
 const BOX0_REQUIRED_CLICKS = 5;
 
 // We distribute remaining time across boxes 1..18, increasing slightly each box.
-const FIRST_AFTER_BOX_SECONDS = 12;
+const FIRST_AFTER_BOX_SECONDS = 2.5;
 
 // This multiplier compensates for the fact that players will continuously buy upgrades
 // (+1 per click cost doubles; auto-click cost doubles), which greatly increases throughput.
 // Tunable knob: raise to make longer, lower to make shorter.
-const REQUIREMENT_MULTIPLIER = 40;
+const REQUIREMENT_MULTIPLIER = 20;
 
 const AFTER_BOX_COUNT = PLAYABLE_BOXES - 1; // boxes 1..18 (18 boxes)
 const remainingSeconds =
@@ -101,8 +100,9 @@ const boxes = Array.from({ length: BOX_COUNT }, (_, i) => {
     } else if ((i + 1) % 2 === 0) {
         reward = { type: "note", id: i + 1 };
     } else {
-        const c = COLLECTIBLES[i % COLLECTIBLES.length];
-        reward = { type: "collectible", id: c.id };
+        const c = COLLECTIBLES[collectibleIndex % COLLECTIBLES.length];
+        reward = { type: "collectible", index: collectibleIndex };
+        collectibleIndex++;
     }
 
     let clicksRequired;
@@ -143,6 +143,75 @@ const collection = document.getElementById("collection");
 const endScreen = document.getElementById("end-screen");
 const clickCounter = document.getElementById("click-counter");
 const upgradePanel = document.getElementById("upgrade-panel");
+
+// --- Collection selection / info panel ---
+let selectedCollectibleEl = null;
+
+function ensureCollectionInfoPanel() {
+    let panel = document.getElementById("collection-info");
+    if (panel) return panel;
+
+    panel = document.createElement("div");
+    panel.id = "collection-info";
+    panel.className = "hidden";
+
+    const title = document.createElement("h3");
+    title.id = "collection-info-title";
+
+    const msg = document.createElement("div");
+    msg.id = "collection-info-message";
+
+    panel.appendChild(title);
+    panel.appendChild(msg);
+
+    // Put it on top of the game UI
+    document.body.appendChild(panel);
+
+    // Close when clicking outside (optional but nice)
+    document.addEventListener("click", (e) => {
+        const clickedInsideCollection = collection?.contains(e.target);
+        const clickedInsidePanel = panel.contains(e.target);
+        if (!clickedInsideCollection && !clickedInsidePanel) {
+            clearSelectedCollectible();
+        }
+    });
+
+    // Close on Escape
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") clearSelectedCollectible();
+    });
+
+    return panel;
+}
+
+function clearSelectedCollectible() {
+    if (selectedCollectibleEl) selectedCollectibleEl.classList.remove("selected");
+    selectedCollectibleEl = null;
+
+    const panel = document.getElementById("collection-info");
+    if (panel) panel.classList.add("hidden");
+}
+
+function selectCollectibleElement(el, collectible) {
+    const panel = ensureCollectionInfoPanel();
+
+    // Toggle off if clicking the same item again
+    if (selectedCollectibleEl === el) {
+        clearSelectedCollectible();
+        return;
+    }
+
+    if (selectedCollectibleEl) selectedCollectibleEl.classList.remove("selected");
+    selectedCollectibleEl = el;
+    el.classList.add("selected");
+
+    const title = document.getElementById("collection-info-title");
+    const msg = document.getElementById("collection-info-message");
+    if (title) title.textContent = collectible?.name ?? "Item";
+    if (msg) msg.innerHTML = collectible?.message ?? "";
+
+    panel.classList.remove("hidden");
+}
 
 let centerBox, rightBox;
 
@@ -215,8 +284,28 @@ function openBox() {
     setTimeout(showReward, 400);
 }
 
+function showKoiNoYokanTitle() {
+    if (document.getElementById("koi-title")) return;
+
+    const title = document.createElement("h1");
+    title.id = "koi-title";
+    title.textContent = "Koi No Yokan";
+
+    // put it inside the game container
+    game.appendChild(title);
+
+    // force initial computed style to apply
+    title.getBoundingClientRect();
+
+    // trigger transition
+    title.classList.add("show");
+}
+
 function showReward() {
     const reward = boxes[currentIndex].reward;
+    if (currentIndex === 1) {
+    showKoiNoYokanTitle();
+}
     overlay.classList.add("visible");
     rewardContent.innerHTML = "";
 
@@ -225,12 +314,12 @@ function showReward() {
     }
 
     if (reward.type === "collectible") {
-        showCollectibleReward(reward.id);
+        showCollectibleReward(reward.index);
     }
 
     if (currentIndex === 0) {
         const firstBoxMessage = document.createElement("p");
-        firstBoxMessage.textContent = "You unlocked some upgrade options, but each box will require more clicks than the last. Do you want to open them all?";
+        firstBoxMessage.textContent = "You unlocked a couple upgrades to buy. Also, try to catch hearts for a bonus! \n\nTo be honest, the hearts thing sort of becomes the game after a certain point. Balancing is hard.";
         firstBoxMessage.style.fontWeight = "bold";
         firstBoxMessage.style.marginBottom = "0.5rem"; // spacing above Continue button
         rewardContent.appendChild(firstBoxMessage);
@@ -260,93 +349,38 @@ function showNoteReward(noteId) {
     rewardContent.appendChild(wrapper);
 }
 
-// function showCollectibleReward() {
-//     const item = document.createElement("div");
-//     item.className = "collectible";
-//     collection.appendChild(item);
+function showCollectibleReward(collectibleIndex) {
+      const c = COLLECTIBLES[collectibleIndex] ?? COLLECTIBLES[0];
 
-//     const preview = document.createElement("div");
-//     preview.className = "collectible";
-//     preview.style.width = "96px";
-//     preview.style.height = "96px";
-//     preview.style.margin = "0 auto 1rem";
-
-//     rewardContent.appendChild(preview);
-// }
-// function showCollectibleReward(collectibleId) {
-//     const c = COLLECTIBLES.find(x => x.id === collectibleId) ?? COLLECTIBLES[0];
-
-//     // Add to collection grid
-//     const item = document.createElement("div");
-//     item.className = "collectible";
-
-
-//     const img = document.createElement("img");
-//     img.src = c.src;
-//     img.alt = c.name;
-//     img.loading = "lazy";
-//     img.style.width = "100%";
-//     img.style.height = "100%";
-//     img.style.objectFit = "contain";
-
-//     item.appendChild(img);
-//     collection.appendChild(item);
-
-//     // Preview in overlay
-//     const previewWrap = document.createElement("div");
-//     previewWrap.className = "collectible preview";
-//     previewWrap.style.width = "96px";
-//     previewWrap.style.height = "96px";
-//     previewWrap.style.margin = "0 auto 1rem";
-
-//     const previewImg = document.createElement("img");
-//     previewImg.src = c.src;
-//     previewImg.alt = c.name;
-//     previewImg.style.width = "100%";
-//     previewImg.style.height = "100%";
-//     previewImg.style.objectFit = "contain";
-
-//     previewWrap.appendChild(previewImg);
-
-//     const label = document.createElement("p");
-//     label.textContent = `You've unwrapped a gift. \n\n ${c.name}`;
-//     label.style.margin = "0 0 0.75rem";
-//     label.style.fontWeight = "600";
-//     label.style.textAlign = "center";
-
-//     rewardContent.appendChild(previewWrap);
-//     rewardContent.appendChild(label);
-// }
-function showCollectibleReward(collectibleId) {
-    const c = COLLECTIBLES.find(x => x.id === collectibleId) ?? COLLECTIBLES[0];
-
-    // Add to collection grid
+    // Add to collection grid (clickable + selectable)
     const item = document.createElement("div");
-    item.className = "collectible";
+    item.className = "collectible selectable";
+    item.dataset.collectibleId = c.id;
 
     const img = document.createElement("img");
     img.src = c.src;
     img.alt = c.name;
-
     item.appendChild(img);
+
+    item.addEventListener("click", (e) => {
+        e.stopPropagation(); // prevents the document click handler from immediately closing it
+        selectCollectibleElement(item, c);
+    });
+
     collection.appendChild(item);
 
-    // Preview in overlay
+    // Preview in overlay (keep your existing behavior)
     const previewWrap = document.createElement("div");
     previewWrap.className = "collectible preview";
-
     const previewImg = document.createElement("img");
     previewImg.src = c.src;
     previewImg.alt = c.name;
-
     previewWrap.appendChild(previewImg);
 
-    // Title
     const title = document.createElement("h3");
     title.textContent = c.name;
     title.style.textAlign = "center";
 
-    // Custom message
     const message = document.createElement("p");
     message.innerHTML = c.message; // allows bold/italic if desired
     message.style.textAlign = "center";
@@ -373,7 +407,7 @@ function updateProgressUIAndHandleCompletion() {
         centerBox.removeEventListener("click", onClickBox);
 
         setTimeout(() => {
-            // If your repo already uses this “second-to-last ends the game” rule, keep it:
+           
             const isFinalBox = currentIndex === boxes.length - 2;
             if (isFinalBox) {
                 showFinalOverlay();
@@ -502,22 +536,7 @@ function showUpgradePanel() {
         }
     };
 
-    // doubleBtn.onclick = () => {
-    //     if (totalClicks >= doubleClickCost && !doubleActive) {
-    //         totalClicks -= doubleClickCost;
-    //         clickPower *= 2;
-    //         doubleActive = true;
-    //         doubleClickCost = 1000; // double the cost each time
-    //         updateClickCounter();
-    //         updateButtons();
-
-    //         setTimeout(() => {
-    //             clickPower /= 2;
-    //             doubleActive = false;
-    //             updateButtons();
-    //         }, 10000);
-    //     }
-    // };
+  
     autoClickBtn.onclick = () => {
         if (totalClicks < autoClickCost) return;
 
