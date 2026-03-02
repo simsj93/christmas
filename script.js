@@ -2,54 +2,54 @@
 
 const NOTES = {
     2: {
-        title: "i",
+        title: "New Note",
         text: "When I first saw you it was on a computer screen: during covid and over Zoom. I think I eventually told you that I would pin your webcam window and study your eyes while Jackie talked. \n\n I felt like I knew you, though we hadn't really even spoken yet. It was as though a future meaning too immense for time was spilling back into the present. \n \nThe Japanese call this Koi No Yokan. "
     },
     4: {
-        title: "ii",
-        text: "Every box asks for more.\nYou keep clicking anyway."
+        title: "New Note",
+        text: "We met a year later. I told you I recognized you by your eyes because you were wearing a mask. I didn’t mention all the staring I did over Zoom that made recognition so easy. Or the unexplained intensities I felt when I looked at you. "
     },
     6: {
-        title: "iii",
-        text: "Effort compounds.\nSo does commitment."
+        title: "New Note",
+        text: "When we became friends it felt like the right hand grasping the left. I had so much to say to you, almost like I had found something lost. One night, overlooking the city, you drew shapes in the fog of my car windshield. I left them there. I was in love with you. \n \n I love my friends, I thought."
     },
     8: {
-        title: "iv",
-        text: "Effort compounds.\nSo does commitment."
+        title: "New Note",
+        text: "Early in our friendship we went to the Cheesecake Factory together. Because we’re both so ironic and down for an ironic good time. I wanted to seem spontaneous. Maybe you did too? I discovered you were a vegetarian that night, a badly disciplined vegetarian."
     },
     10: {
-        title: "v",
-        text: "Effort compounds.\nSo does commitment."
+        title: "New Note",
+        text: "Once, when we were driving together and talking about male feminists or sex politics or something, you told me you were “anti-giving-men-what-they-want.” I was quiet, amused and hoping you’d elaborate. Maybe you thought I took offense so you hedged, “I mean, I know we’re all just horny babies at the end of the day.” Maybe I should have taken some offense, but I was always on your side. \n\n “Who am I to you?” I thought, worried you could sense some disallowed intention in me, suppressed."
     },
     12: {
-        title: "vi",
-        text: "Effort compounds.\nSo does commitment."
+        title: "New Note",
+        text: "When it was very cold once, and more than once, we went to the labyrinth next to the Presbyterian church. A place of contemplation. We walked the labyrinth together and I talked the whole time. "
     },
     14: {
-        title: "vii",
-        text: "Effort compounds.\nSo does commitment."
+        title: "New Note",
+        text: "When I helped you move, I saw the inside of your room. It was half-empty, almost vacant. You were already elsewhere: re-rooting yourself in another space. I had sometimes pictured you in that room. Something I’d imagined but knew I’d never have license to see. Not so sacred as behind the tabernacle, but just as pre-occupying. "
     },
     16: {
-        title: "iix",
-        text: "Effort compounds.\nSo does commitment."
+        title: "New Note",
+        text: "You told me you were going to rehab. \n \n You told me I was important to you. \n \n Two surprises. "
     },
     18: {
-        title: "ix",
-        text: "Effort compounds.\nSo does commitment."
+        title: "New Note",
+        text: "How many times did I tell you I love you without ever really saying it? “Of course you understand what I mean.” “You’re my best friend.” “I fall in love with everyone.” (you’re everyone) “I was going to call you beautiful but I got nervous.” “I just don’t expect people who think like you to look like you.” \n \n You know I tried not to say the wrong thing, to say too much. To say out loud what I would barely let myself think. "
     },
     20: {
-        title: "x",
+        title: "New Note",
         text: "Effort compounds.\nSo does commitment."
     },
     // add more as needed
 };
 
 const COLLECTIBLES = [
-    { id: "can", name: "Can", src: "./assets/can.png", message: "a" },
-    { id: "leash", name: "Leash", src: "./assets/leash.png", message: "b" },
-    { id: "shrimp", name: "Shrimp 3", src: "./assets/shrimp.png", message: "I know you don't like it but it's full of selenium." },
-    { id: "shrimp", name: "Shrimp 4", src: "./assets/shrimp.png", message: "c" },
-    { id: "shrimp", name: "Shrimp 5", src: "./assets/shrimp.png", message: "c" },
+    { id: "can", name: "Diet Coke", src: "./assets/can.png", message: "Now available in 8 ounce cans. You can probably guess why it doesn't actually say Coke on the can." },
+    { id: "leash", name: "Leash", src: "./assets/leash.png", message: "I added this object early in development and have since forgotten why. Mystery abounds. Definitely nothing weird though." },
+    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "The evils of shellfish consumption are balanced by their nutritional selenium content." },
+    { id: "phone", name: "Phone", src: "./assets/phone.png", message: "A mutual favorite: the phone. Please tell me you aren't playing this on a phone. Can you even read this?" },
+    { id: "key", name: "My Apartment Key", src: "./assets/key.png", message: "Are we moving too fast? No. Never were." },
     { id: "shrimp", name: "Shrimp 6", src: "./assets/shrimp.png", message: "c" },
     { id: "shrimp", name: "Shrimp 7", src: "./assets/shrimp.png", message: "c" },
     { id: "shrimp", name: "Shrimp 8", src: "./assets/shrimp.png", message: "c" },
