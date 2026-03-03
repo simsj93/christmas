@@ -47,12 +47,12 @@ const NOTES = {
 const COLLECTIBLES = [
     { id: "can", name: "Diet Coke", src: "./assets/can.png", message: "Now available in 8 ounce cans. You can probably guess why it doesn't actually say Coke on the can." },
     { id: "leash", name: "Leash", src: "./assets/leash.png", message: "I added this object early in development and have since forgotten why. Mystery abounds. Definitely nothing weird though." },
-    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "The evils of shellfish consumption are balanced by their nutritional selenium content." },
+    { id: "shrimp", name: "Shrimp", src: "./assets/shrimp.png", message: "The evils of shellfish consumption are balanced by their nutritional selenium content. You can click on the objects up there, by the way." },
     { id: "phone", name: "Phone", src: "./assets/phone.png", message: "A mutual favorite: the phone. Please tell me you aren't playing this on a phone. Can you even read this?" },
     { id: "key", name: "My Apartment Key", src: "./assets/key.png", message: "Are we moving too fast? No. Never were." },
-    { id: "shrimp", name: "Shrimp 6", src: "./assets/shrimp.png", message: "c" },
-    { id: "shrimp", name: "Shrimp 7", src: "./assets/shrimp.png", message: "c" },
-    { id: "shrimp", name: "Shrimp 8", src: "./assets/shrimp.png", message: "c" },
+    { id: "gift", name: "Gift Box", src: "./assets/chest.png", message: "That's weird. There was another, smaller one inside." },
+    { id: "apartment", name: "Aerial View of The Apartment", src: "./assets/apartment.png", message: "The photo I had made was a little more zoomed out than I would have hoped." },
+    { id: "us", name: "Us", src: "./assets/us.png", message: "An artist's rendition of youngsters in love." },
     // add more...
 
 
@@ -77,7 +77,7 @@ const ASSUMED_CLICKS_PER_SEC = 4;
 const BOX0_REQUIRED_CLICKS = 5;
 
 // We distribute remaining time across boxes 1..18, increasing slightly each box.
-const FIRST_AFTER_BOX_SECONDS = 2.5;
+const FIRST_AFTER_BOX_SECONDS = 3;
 
 // This multiplier compensates for the fact that players will continuously buy upgrades
 // (+1 per click cost doubles; auto-click cost doubles), which greatly increases throughput.
