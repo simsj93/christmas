@@ -1,7 +1,7 @@
 :root {
     --box-size: 180px;
     --transition-speed: 700ms;
-    --fill-color: #90ee90;
+    --fill-color: #82f082;
     --bg: #f6f6f6;
 }
 
@@ -10,9 +10,8 @@ body {
     background: var(--bg);
     font-family: system-ui, sans-serif;
     overflow: hidden;
+     background: radial-gradient(1200px 700px at 50% 15%, #ffffff 0%, #e2e2e2 60%, #d7deec 100%);
 }
-
-
 /* CSS */
 .button-39 {
     background-color: #FFFFFF;
@@ -35,6 +34,7 @@ body {
     touch-action: manipulation;
     width: auto;
     white-space: nowrap;
+  transition: transform 80ms ease, box-shadow 80ms ease;
 }
 
 .button-39:hover {
@@ -44,6 +44,10 @@ body {
 .button-39:focus {
     outline: 2px solid transparent;
     outline-offset: 2px;
+}
+
+.button-39:active {
+  transform: translateY(2px) scale(0.98);
 }
 
 .button-39:focus-visible {
@@ -104,6 +108,8 @@ body {
 
     opacity: 0;
     transition: opacity 1.2s ease, transform 1.2s ease;
+    color: #d7deec; 
+   
 }
 
 #koi-title.show {
@@ -381,7 +387,7 @@ body {
 
 #end-screen .end-content {
     max-width: 520px;
-    width: 90%;
+    width: 100%;
     text-align: center;
     font-size: 1.5rem;
     padding: 1rem;

@@ -2,43 +2,43 @@
 
 const NOTES = {
     2: {
-        title: "New Note",
+        title: "Recieved Note",
         text: "When I first saw you it was on a computer screen: during covid and over Zoom. I think I eventually told you that I would pin your webcam window and study your eyes while Jackie talked. \n\n I felt like I knew you, though we hadn't really even spoken yet. It was as though a future meaning too immense for time was spilling back into the present. \n \nThe Japanese call this Koi No Yokan. "
     },
     4: {
-        title: "New Note",
+        title: "Recieved Note",
         text: "We met a year later. I told you I recognized you by your eyes because you were wearing a mask. I didn’t mention all the staring I did over Zoom that made recognition so easy. Or the unexplained intensities I felt when I looked at you. "
     },
     6: {
-        title: "New Note",
+        title: "Recieved Note",
         text: "When we became friends it felt like the right hand grasping the left. I had so much to say to you, almost like I had found something lost. One night, overlooking the city, you drew shapes in the fog of my car windshield. I left them there. I was in love with you. \n \n I love my friends, I thought."
     },
     8: {
-        title: "New Note",
+        title: "Recieved Note",
         text: "Early in our friendship we went to the Cheesecake Factory together. Because we’re both so ironic and down for an ironic good time. I wanted to seem spontaneous. Maybe you did too? I discovered you were a vegetarian that night, a badly disciplined vegetarian."
     },
     10: {
-        title: "New Note",
+        title: "Recieved Note",
         text: "Once, when we were driving together and talking about male feminists or sex politics or something, you told me you were “anti-giving-men-what-they-want.” I was quiet, amused and hoping you’d elaborate. Maybe you thought I took offense so you hedged, “I mean, I know we’re all just horny babies at the end of the day.” Maybe I should have taken some offense, but I was always on your side. \n\n “Who am I to you?” I thought, worried you could sense some disallowed intention in me, suppressed."
     },
     12: {
-        title: "New Note",
+        title: "Recieved Note",
         text: "When it was very cold once, and more than once, we went to the labyrinth next to the Presbyterian church. A place of contemplation. We walked the labyrinth together and I talked the whole time. "
     },
     14: {
-        title: "New Note",
+        title: "Recieved Note",
         text: "When I helped you move, I saw the inside of your room. It was half-empty, almost vacant. You were already elsewhere: re-rooting yourself in another space. I had sometimes pictured you in that room. Something I’d imagined but knew I’d never have license to see. Not so sacred as behind the tabernacle, but just as pre-occupying. "
     },
     16: {
-        title: "New Note",
+        title: "Recieved Note",
         text: "You told me you were going to rehab. \n \n You told me I was important to you. \n \n Two surprises. "
     },
     18: {
-        title: "New Note",
+        title: "Recieved Note",
         text: "How many times did I tell you I love you without ever really saying it? “Of course you understand what I mean.” “You’re my best friend.” “I fall in love with everyone.” (you’re everyone) “I was going to call you beautiful but I got nervous.” “I just don’t expect people who think like you to look like you.” \n \n You know I tried not to say the wrong thing, to say too much. To say out loud what I would barely let myself think. "
     },
     20: {
-        title: "New Note",
+        title: "Recieved Note",
         text: "Effort compounds.\nSo does commitment."
     },
     // add more as needed
@@ -304,8 +304,8 @@ function showKoiNoYokanTitle() {
 function showReward() {
     const reward = boxes[currentIndex].reward;
     if (currentIndex === 1) {
-    showKoiNoYokanTitle();
-}
+        showKoiNoYokanTitle();
+    }
     overlay.classList.add("visible");
     rewardContent.innerHTML = "";
 
@@ -350,7 +350,7 @@ function showNoteReward(noteId) {
 }
 
 function showCollectibleReward(collectibleIndex) {
-      const c = COLLECTIBLES[collectibleIndex] ?? COLLECTIBLES[0];
+    const c = COLLECTIBLES[collectibleIndex] ?? COLLECTIBLES[0];
 
     // Add to collection grid (clickable + selectable)
     const item = document.createElement("div");
@@ -407,7 +407,7 @@ function updateProgressUIAndHandleCompletion() {
         centerBox.removeEventListener("click", onClickBox);
 
         setTimeout(() => {
-           
+
             const isFinalBox = currentIndex === boxes.length - 2;
             if (isFinalBox) {
                 showFinalOverlay();
@@ -536,7 +536,7 @@ function showUpgradePanel() {
         }
     };
 
-  
+
     autoClickBtn.onclick = () => {
         if (totalClicks < autoClickCost) return;
 
@@ -641,6 +641,15 @@ function showFinalOverlay() {
 
     // Show your existing end screen / overlay
     endScreen.classList.add("visible");
+    const finalSound = document.getElementById("final-sound");
+    setTimeout(() => {
+    if (finalSound.paused) {
+        finalSound.currentTime = 0;
+        finalSound.play();
+    }
+}, 5000);
+    
+  
 }
 // --- DEV MODE BUTTON ---
 const devBtn = document.createElement("button");
