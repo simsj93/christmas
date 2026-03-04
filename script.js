@@ -15,7 +15,7 @@ const NOTES = {
     },
     8: {
         title: "Memory",
-        text: "Early in our friendship we went to the Cheesecake Factory together. Because we’re both so ironic and down for an ironic good time. I wanted to seem spontaneous. Maybe you did too? I discovered you were a vegetarian that night, a badly disciplined vegetarian."
+        text: "Early in our friendship we went to the Cheesecake Factory together. Because we’re both so ironic and down for an ironic good time. I wanted to seem spontaneous. Maybe you did too? I discovered you were a vegetarian that night: a badly disciplined vegetarian."
     },
     10: {
         title: "Memory",
@@ -23,7 +23,7 @@ const NOTES = {
     },
     12: {
         title: "Memory",
-        text: "When it was very cold once, and more than once, we went to the labyrinth next to the Presbyterian church. A place of contemplation. We walked the labyrinth together and I talked the whole time. "
+        text: "When it was very cold once, and more than once, we went to the labyrinth next to the Presbyterian church. A place of quiet contemplation. We walked the labyrinth together and I talked the whole time. "
     },
     14: {
         title: "Memory",
@@ -35,7 +35,7 @@ const NOTES = {
     },
     18: {
         title: "Memory",
-        text: "How many times did I tell you I love you without ever really saying it? \n \n “Of course you understand what I mean.” “You’re my best friend.” “I fall in love with everyone.” (you’re everyone) “I was going to call you beautiful but I got nervous.” “I just don’t expect people who think like you to look like you.” \n \n You know I tried not to say the wrong thing, to say too much. To say out loud what I would barely let myself think. "
+        text: "How many times did I tell you I love you without ever really saying it? \n \n “Of course you understand what I mean.” “You’re my best friend.” “I fall in love with everyone.” (you’re everyone) “I was going to call you beautiful but I got nervous.” “I just don’t expect people who look like you to think like you.” \n \n You know I tried not to say the wrong thing, to say too much. To say it out loud. "
     },
     20: {
         title: "Recieved Note",
