@@ -5,6 +5,15 @@
     --bg: #f6f6f6;
 }
 
+/* Make height calculations include padding */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+#game {
+  box-sizing: border-box; /* redundant with the global rule, but explicit */
+}
+
 body {
     margin: 0;
     background: var(--bg);
